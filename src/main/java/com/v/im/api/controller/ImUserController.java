@@ -117,7 +117,7 @@ public class ImUserController {
     public void sendMsg(String userId, String msg, HttpServletRequest request) throws Exception {
         String host = ChatUtils.getHost(request);
         ServerGroupContext serverGroupContext = startTioRunner.getAppStarter().getWsServerStarter().getServerGroupContext();
-
+        System.out.println(msg);
         SendInfo sendInfo = new SendInfo();
         sendInfo.setCode(ChatUtils.MSG_MESSAGE);
         Message message = new Message();
