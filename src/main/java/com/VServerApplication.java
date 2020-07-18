@@ -16,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication()
 @EnableCaching
 @MapperScan("com.v.im")
+@ComponentScan("com.v.im.conf")
 public class VServerApplication {
 
     public static void main(String[] args) {
