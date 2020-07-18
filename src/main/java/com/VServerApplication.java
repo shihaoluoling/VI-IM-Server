@@ -13,7 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @author 乐天
  * @since 2018-10-01
  */
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@SpringBootApplication()
 @EnableCaching
 @MapperScan("com.v.im")
 public class VServerApplication {
