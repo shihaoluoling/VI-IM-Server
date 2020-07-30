@@ -6,8 +6,8 @@ import com.v.im.message.entity.ImMessage;
 /**
  * Mapper 接口
  *
- * @author 乐天
- * @since 2018-10-08
+ * @author 皓天
+ * @since 2020-7-07
  */
 public interface ImMessageMapper extends BaseMapper<ImMessage> {
 

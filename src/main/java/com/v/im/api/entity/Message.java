@@ -5,8 +5,8 @@ import lombok.Data;
 /**
  * websocket 通讯的json
  *
- * @author 乐天
- * @since 2018-10-07
+ * @author 皓天
+ * @since 2020-7-07
  */
 @Data
 public class Message {

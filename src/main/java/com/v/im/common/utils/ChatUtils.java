@@ -5,8 +5,8 @@ import javax.servlet.http.HttpServletRequest;
 /**
  *  封装的信息类型 UTILS
  *
- * @author 乐天
- * @since 2018-10-07
+ * @author 皓天
+ * @since 2020-7-07
  */
 public class ChatUtils {
 
