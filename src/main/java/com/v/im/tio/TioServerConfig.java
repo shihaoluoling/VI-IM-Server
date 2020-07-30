@@ -9,7 +9,7 @@ import org.tio.utils.time.Time;
  * TIO 配置文件
  *
  * @author 皓天
- * @since 2018-04-10
+ * @since 2020-7-07
  */
 public abstract class TioServerConfig {
     /**

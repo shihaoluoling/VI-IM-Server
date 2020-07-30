@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration;
 /**
  * mybatis-plus 分页设置
  *
- * @author 乐天
- * @since 2018-12-23
+ * @author 皓天
+ * @since 2020-7-07
  */
 @Configuration
 public class PageConfig {

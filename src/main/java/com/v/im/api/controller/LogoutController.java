@@ -11,8 +11,8 @@ import javax.annotation.Resource;
 /**
  * 退出登录
  *
- * @author 乐天
- * @since 2018-10-07
+ * @author 皓天
+ * @since 2020-7-07
  */
 @Controller
 public class LogoutController {

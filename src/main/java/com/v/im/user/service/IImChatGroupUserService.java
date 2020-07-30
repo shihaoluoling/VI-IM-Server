@@ -8,8 +8,8 @@ import com.v.im.user.entity.ImChatGroupUser;
  * 群 服务类
  * </p>
  *
- * @author 乐天
- * @since 2018-10-28
+ * @author 皓天
+ * @since 2020-7-07
  */
 public interface IImChatGroupUserService extends IService<ImChatGroupUser> {
 

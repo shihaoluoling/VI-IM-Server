@@ -12,8 +12,8 @@ import java.util.Date;
  * 群
  * </p>
  *
- * @author 乐天
- * @since 2018-10-28
+ * @author 皓天
+ * @since 2020-7-07
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

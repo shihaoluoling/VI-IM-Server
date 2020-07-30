@@ -6,8 +6,8 @@ import org.tio.websocket.server.WsServerStarter;
 /**
  * TIO 配置文件
  *
- * @author 乐天
- * @since 2018-04-10
+ * @author 皓天
+ * @since 2020-7-07
  */
 public class TioWebsocketStarter {
 
