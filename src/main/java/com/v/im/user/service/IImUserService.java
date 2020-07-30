@@ -51,4 +51,17 @@ public interface IImUserService extends IService<ImUser> {
      * @param imUser 用户对象
      */
     void registerUser(ImUser imUser);
+
+
+    /**
+     * 条件查询用户
+     * @param  loginName 用户登陆名
+     * @return  用户List
+     * */
+    List<ImUser> getUsers(String loginName);
+
+/**
+* 条件查询盆友
+* */
+ImUser getByUserId(String userId);
 }

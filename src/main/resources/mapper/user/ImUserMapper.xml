@@ -51,4 +51,21 @@
                      FROM im_chat_group_user cg
                      WHERE cg.chat_group_id = #{chatId})
     </select>
+
+    <select id="getUsers" parameterType="string" resultType="com.v.im.user.entity.ImUser">
+      SELECT
+	id,
+	avatar,
+	NAME,
+	mobile,
+	sign
+FROM
+	im_user
+WHERE
+        1=1
+<if test="loginName != '' and loginName != null">
+    AND login_name = #{loginName}
+</if>
+
+    </select>
 </mapper>

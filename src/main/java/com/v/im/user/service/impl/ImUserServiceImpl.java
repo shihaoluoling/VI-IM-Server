@@ -8,6 +8,7 @@ import com.v.im.user.service.IImChatGroupUserService;
 import com.v.im.user.service.IImGroupService;
 import com.v.im.user.service.IImUserFriendService;
 import com.v.im.user.service.IImUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -106,5 +107,16 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
             throw new RuntimeException(e);
         }
 
+    }
+    @Override
+    public List<ImUser> getUsers(String loginName){
+        return baseMapper.getUsers(loginName);
+    }
+
+    @Override
+    public ImUser getByUserId(String userId) {
+        QueryWrapper<ImUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", userId);
+        return baseMapper.selectOne(queryWrapper);
     }
 }

@@ -44,5 +44,8 @@ public class ImUserFriend extends BaseEntity implements Serializable  {
      */
     private String friendGroupId;
 
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
 }

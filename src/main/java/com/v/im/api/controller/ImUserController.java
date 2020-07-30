@@ -1,7 +1,9 @@
 package com.v.im.api.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.v.im.api.entity.Message;
 import com.v.im.api.entity.SendInfo;
 import com.v.im.common.utils.ChatUtils;
@@ -10,9 +12,12 @@ import com.v.im.message.service.IImMessageService;
 import com.v.im.tio.StartTioRunner;
 import com.v.im.tio.TioServerConfig;
 import com.v.im.tio.WsOnlineContext;
-import com.v.im.user.entity.FileDesc;
-import com.v.im.user.entity.ImUser;
+import com.v.im.user.entity.*;
 import com.v.im.user.mapper.FileDescMapper;
+import com.v.im.user.mapper.ImGroupMapper;
+import com.v.im.user.mapper.ImUserFriendMapper;
+import com.v.im.user.service.IImChatGroupService;
+import com.v.im.user.service.IImChatGroupUserService;
 import com.v.im.user.service.IImUserFriendService;
 import com.v.im.user.service.IImUserService;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -22,10 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.tio.core.ChannelContext;
 import org.tio.core.Tio;
 import org.tio.server.ServerGroupContext;
@@ -33,6 +35,7 @@ import org.tio.websocket.common.WsResponse;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,8 +67,18 @@ public class ImUserController {
     @Resource
     @Qualifier(value = "iImMessageService")
     private IImMessageService iImMessageService;
+    @Resource
+    @Qualifier(value = "imChatGroupServiceImpl")
+    private IImChatGroupService iImChatGroupService;
+    @Resource
+    @Qualifier(value = "imChatGroupUserService")
+    private IImChatGroupUserService iImChatGroupUserService;
     @Autowired
     FileDescMapper fileDescMapper;
+    @Autowired
+    private ImGroupMapper imGroupMapper;
+    @Autowired
+    private ImUserFriendMapper imUserFriendMapper;
     /**
      * 用户信息初始化
      *
@@ -85,7 +98,7 @@ public class ImUserController {
         String host = ChatUtils.getHost(request);
         QueryWrapper<ImUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("login_name", username);
-        user.setAvatar(host + user.getAvatar());
+        user.setAvatar(user.getAvatar());
         user.setPassword(null);
         objectMap.put("me", user);
 
@@ -116,8 +129,9 @@ public class ImUserController {
     @PostMapping("sendMsg")
     public void sendMsg(String userId, String msg, HttpServletRequest request) throws Exception {
         String host = ChatUtils.getHost(request);
+        System.out.println("我是host"+host);
         ServerGroupContext serverGroupContext = startTioRunner.getAppStarter().getWsServerStarter().getServerGroupContext();
-        System.out.println(msg);
+        System.out.println(msg+"发消息");
         SendInfo sendInfo = new SendInfo();
         sendInfo.setCode(ChatUtils.MSG_MESSAGE);
         Message message = new Message();
@@ -155,5 +169,86 @@ public class ImUserController {
     @PostMapping("test")
     public void sendMsgee(FileDesc fileDesc) {
         System.out.println(fileDescMapper.insert(fileDesc));
+    }
+    @PostMapping("addGroupChat")
+    public boolean testtest(String test,String userId,String url) {
+        System.out.println(url+"我是url");
+        ImChatGroup imChatGroup = new ImChatGroup();
+        imChatGroup.setName(test);
+        imChatGroup.setMaster(userId);
+        imChatGroup.setAvatar(url);
+        iImChatGroupService.save(imChatGroup);
+        System.out.println(imChatGroup.getId()+"hah1");
+        ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
+        imChatGroupUser.setChatGroupId(imChatGroup.getId());
+        imChatGroupUser.setUserId(userId);
+        imChatGroupUser.setCreateDate(new Date());
+        boolean b = iImChatGroupUserService.save(imChatGroupUser);
+        return b;
+    }
+    @RequestMapping(value = "search", method = RequestMethod.GET)
+    public List<ImUser> search(String phone) {
+        System.out.println(phone);
+
+        return imUserService.getUsers(phone);
+    }
+    @RequestMapping(value = "selectGroup", method = RequestMethod.GET)
+    public List<ImGroup> selectGroup(String userId) {
+        Map<String,Object> map = new HashMap();
+        map.put("user_id",userId);
+        return imGroupMapper.selectByMap(map);
+    }
+
+    @RequestMapping(value = "addUser", method = RequestMethod.POST)
+    public int addUser(String addUserId,String userGroupId,String beUserGroupId,String beAddUser,String state) {
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("user_id",addUserId);
+        map.put("friend_id",beAddUser);
+        List<ImUserFriend> friends = imUserFriendMapper.selectByMap(map);
+        System.out.println("我是fr"+friends);
+        if (friends.size()==0){
+            ImUserFriend imUserFriend = new ImUserFriend();
+            imUserFriend.setUserId(addUserId);
+            imUserFriend.setUserGroupId(userGroupId);
+
+            imUserFriend.setFriendId(beAddUser);
+
+            imUserFriend.setFriendGroupId(beUserGroupId);
+            imUserFriend.setDelFlag(state);
+            imUserFriendMapper.insert(imUserFriend);
+        }
+        return 0;
+    }
+    @RequestMapping(value = "agreedAddUser", method = RequestMethod.POST)
+    public int agreedAddUser(String addUserId,String userGroupId,String beUserGroupId,String beAddUser,String state) {
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("user_id",addUserId);
+        map.put("friend_id",beAddUser);
+        List<ImUserFriend> friends = imUserFriendMapper.selectByMap(map);
+        if (friends.size()!=0){
+            ImUserFriend imUserFriend = new ImUserFriend();
+            imUserFriend.setFriendGroupId(beUserGroupId);
+            imUserFriend.setDelFlag(state);
+
+            UpdateWrapper<ImUserFriend> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("user_id",addUserId);
+            updateWrapper.eq("friend_id",beAddUser);
+            imUserFriendMapper.update(imUserFriend,updateWrapper);
+            return 0;
+        }
+        return 1;
+    }
+
+    @RequestMapping(value = "selectUserFriend", method = RequestMethod.GET)
+    public Map selectUserFriend(String userId) {
+        System.out.println(userId+"username777");
+        Map<String, Object> objectMap = new HashMap<>();
+        //获取好友信息
+        ImUser user = imUserService.getByUserId(userId);
+        objectMap.put("friends", imUserFriendService.getUserFriends(user.getId()));
+
+        return objectMap;
     }
 }

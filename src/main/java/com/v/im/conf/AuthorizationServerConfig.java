@@ -40,6 +40,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         String finalSecret = "{bcrypt}" + new BCryptPasswordEncoder().encode("v-client-ppp");
+        System.out.println(finalSecret+"密码");
+        System.out.println(clients);
         clients.inMemory().withClient("v-client")
                 .authorizedGrantTypes("password", "refresh_token")
                 .scopes("select")
@@ -56,15 +58,23 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+        System.out.println("mima");
         endpoints
                 .tokenStore(getTokenStore())
                 .authenticationManager(authenticationManager)
                 .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);
         endpoints.userDetailsService(userDetailsService);
+        // 密码模式
+//               .authenticationManager(authenticationManager)
+//                // 授权码模式
+//                .authorizationCodeServices(authorizationCodeServices())
+//                // 令牌管理
+//                .tokenServices(tokenServices());
     }
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
+        System.out.println("允许表单认证");
         //允许表单认证
         oauthServer.allowFormAuthenticationForClients();
     }
@@ -88,10 +98,11 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
+            System.out.println("认证访问");
             http
                     .authorizeRequests()
                     //配置security访问控制，必须认证过后才可以访问
-                    .antMatchers("/ap/**")
+                    .antMatchers("/api/**")
                     .authenticated()
                     //支持跨域
                     .and()

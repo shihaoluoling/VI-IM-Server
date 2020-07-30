@@ -41,7 +41,23 @@ public class ImChatGroup extends BaseEntity implements Serializable {
      */
     private String master;
 
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
+    public String getId() {
+        return id;
+    }
 
+    public String getName() {
+        return name;
+    }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public String getMaster() {
+        return master;
+    }
 }

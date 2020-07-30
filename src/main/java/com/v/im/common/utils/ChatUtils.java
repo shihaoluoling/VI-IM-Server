@@ -15,6 +15,10 @@ public class ChatUtils {
      */
     public static final String FRIEND = "0";
     /**
+     * 群聊
+     */
+    public static final String GROUP = "1";
+    /**
      * 已读
      */
     public static final String READED = "0";
@@ -38,6 +42,11 @@ public class ChatUtils {
      * 消息
      */
     public static final String MSG_MESSAGE = "2";
+
+    /**
+     *验证
+     */
+    public static final String VERIFY = "2";
 
 
     public static String getHost(HttpServletRequest request) {

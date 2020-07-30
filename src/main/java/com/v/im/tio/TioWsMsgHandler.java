@@ -66,13 +66,16 @@ public class TioWsMsgHandler implements IWsMsgHandler {
     @Override
     public HttpResponse handshake(HttpRequest request, HttpResponse httpResponse, ChannelContext channelContext) {
         String token = request.getParam("token");
+        System.out.println("我是token"+token);
         try {
             OAuth2Authentication auth2Authentication = defaultTokenServices.loadAuthentication(token);
             org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) auth2Authentication.getUserAuthentication().getPrincipal();
             String userId = imUserService.getByLoginName(user.getUsername()).getId();
+            System.out.println("我是用户"+user);
             //绑定用户
             Tio.bindUser(channelContext, userId);
             // 在线用户绑定到上下文 用于发送在线消息
+            System.out.println(channelContext+"channelContext");
             WsOnlineContext.bindUser(userId, channelContext);
             //绑定群组
             List<ImChatGroup> groups = imUserService.getChatGroups(userId);
@@ -127,8 +130,9 @@ public class TioWsMsgHandler implements IWsMsgHandler {
     public Object onText(WsRequest wsRequest, String text, ChannelContext channelContext) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
+            System.out.println(text+"test");
             SendInfo sendInfo = objectMapper.readValue(text, SendInfo.class);
-            System.out.println(text);
+
             //心跳检测包
             if (ChatUtils.MSG_PING.equals(sendInfo.getCode())) {
                 WsResponse wsResponse = WsResponse.fromText(text, TioServerConfig.CHARSET);
@@ -141,6 +145,7 @@ public class TioWsMsgHandler implements IWsMsgHandler {
                 WsResponse wsResponse = WsResponse.fromText(objectMapper.writeValueAsString(sendInfo), TioServerConfig.CHARSET);
                 //单聊
                 if (ChatUtils.FRIEND.equals(message.getType())) {
+                    System.out.println("单聊");
                     SetWithLock<ChannelContext> channelContextSetWithLock = Tio.getChannelContextsByUserid(channelContext.groupContext, message.getId());
                     //用户没有登录，存储到离线文件
                     if (channelContextSetWithLock == null || channelContextSetWithLock.size() == 0) {
@@ -150,10 +155,22 @@ public class TioWsMsgHandler implements IWsMsgHandler {
                         //入库操作
                         saveMessage(message, ChatUtils.READED);
                     }
-                } else {
+                } else if (ChatUtils.GROUP.equals(message.getType())){
+                    System.out.println("群发");
                     Tio.sendToGroup(channelContext.groupContext, message.getId(), wsResponse);
                     //入库操作
                     saveMessage(message, ChatUtils.READED);
+                } else if (ChatUtils.VERIFY.equals(message.getType())){
+                    System.out.println("验证");
+                    SetWithLock<ChannelContext> channelContextSetWithLock = Tio.getChannelContextsByUserid(channelContext.groupContext, message.getId());
+                    //用户没有登录，存储到离线文件
+                    if (channelContextSetWithLock == null || channelContextSetWithLock.size() == 0) {
+                        saveMessage(message, ChatUtils.UNREAD);
+                    } else {
+                        Tio.sendToUser(channelContext.groupContext, message.getId(), wsResponse);
+                        //入库操作
+                        saveMessage(message, ChatUtils.READED);
+                    }
                 }
             }
             //准备就绪，需要发送离线消息

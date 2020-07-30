@@ -159,6 +159,16 @@
             <artifactId>jaxb-runtime</artifactId>
             <version>2.3.0-b170127.1453</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.8</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -193,6 +203,7 @@
                 <!--<include>**/*.yml</include>-->
                 <include>**/*.properties</include>
                 <include>**/*.xml</include>
+                <include>**/*.conf</include>
             </includes>
             <filtering>false</filtering>
             </resource>

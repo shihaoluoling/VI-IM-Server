@@ -42,4 +42,12 @@ public interface ImUserMapper extends BaseMapper<ImUser> {
      * @return 用户List
      */
     List<ImUser> getChatUserList(String chatId);
+
+
+    /**
+    * 条件查询用户
+    * @param  loginName 用户登陆名
+     * @return  用户List
+    * */
+    List<ImUser> getUsers(String loginName);
 }
